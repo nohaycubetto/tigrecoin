@@ -3,15 +3,20 @@ require __DIR__ . '/vendor/autoload.php';
 
 function insert_coin($coin_amount, $machine_id)
 {
+	$app_id = $_SERVER['PUSHER_APP_ID'];
+	$app_key = $_SERVER['PUSHER_APP_KEY'];
+	$app_secret = $_SERVER['PUSHER_APP_SECRET'];
+	$app_cluster = $_SERVER['PUSHER_CLUSTER'];
+
 	$options = [
-		'cluster' => 'mt1',
+		'cluster' => $app_cluster,
 		'useTLS' => true
 	];
 
 	$pusher = new Pusher\Pusher(
-		'd2b0d2035e8be20fcdf2',
-		'75646fdc8772b387bd06',
-		'1021042',
+		$app_key,
+		$app_secret,
+		$app_id,
 		$options
 	);
 
@@ -36,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	$machine_id = $_POST['machine_id'];
 	$coin_amount = $_POST['coin_amount'];
 	insert_coin($coin_amount,$machine_id);
-	$notification = "Sent $coin_amount coin(s) to $machine_id";
+	$notification = "Sent <strong>$coin_amount</strong> coin(s) to <strong>$machine_id</strong>";
 }
 ?>
 <html>
@@ -48,7 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 <body>
 	<h1>TigreCoin Test 1</h1>
-	<p><strong><?php echo $notification; ?></strong></p>
+	<p><?php if(isset($notification)) echo $notification; ?></p>
 	<form method="POST" action="index.php">
 		<input type="text" name="machine_id" value="machine-1">
 		<input type="text" name="coin_amount" value="1">
